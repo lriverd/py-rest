@@ -6,10 +6,13 @@ import os
 
 app = Flask(__name__)
 
-app.config['MONGO_URI'] = os.environ['MONGO_URI']
+app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
 
 mongo = PyMongo(app)
 
+@app.route('/')
+def hello_world():
+  return 'Servidor Up'
 
 @app.route('/status', methods=['GET'])
 def get_status():
@@ -39,4 +42,4 @@ def add_order():
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run()

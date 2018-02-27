@@ -21,7 +21,7 @@ def get_status():
 	return jsonify({'result': output})
 
 
-@app.route('/order', methods=['POST'])
+@app.route('/customerorder', methods=['POST'])
 def add_order():
 	result = ''
 	detail = ''

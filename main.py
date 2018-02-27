@@ -27,11 +27,11 @@ def add_order():
 	detail = ''
 	try:
 		order = mongo.db.orders
-		tXML = request.json['tXML']
-		# msge = request.json['Message']
-		order_id = order.insert({'tXML': tXML})
+		header = request.json['Header']
+		msge = request.json['Message']
+		order_id = order.insert({'Header': header, 'Message': msge})
 		new_order = order.find_one({'_id': order_id})
-		output = {'tXML': new_order['tXML']}
+		output = {'Header': new_order['Header']}
 
 		if output != '':
 			result = 'Succcess'
@@ -43,4 +43,4 @@ def add_order():
 
 
 if __name__ == '__main__':
-	app.run()
+	app.run(debug=True)

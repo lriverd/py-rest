@@ -1,4 +1,4 @@
-
+import logging.config
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -8,14 +8,16 @@ from database import AmandaMessages
 import time
 import os
 
+logging.config.fileConfig('logging.ini')
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
 
-
 @app.route('/')
 def hello_world():
-  return 'Application Up'
+  return os.environ.get('MONGO_URI')
 
 @app.route('/status', methods=['GET'])
 def get_status():
@@ -42,6 +44,7 @@ def add_order():
 		output = {'Header': new_order['Header']}
 
 		if output != '':
+			detail = str(order_id)
 			result = 'Succcess'
 	except Exception as e:
 		result = 'Error'

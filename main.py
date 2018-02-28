@@ -1,4 +1,4 @@
-import logging.config
+#import logging.config
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -8,8 +8,8 @@ from database import AmandaMessages
 import time
 import os
 
-logging.config.fileConfig('logging.ini')
-logger = logging.getLogger(__name__)
+#logging.config.fileConfig('logging.ini')
+#logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -64,7 +64,6 @@ def add_order2():
 		order_id = order.insert_one({'Header': header, 'Message': msge}).inserted_id
 		new_order = order.find_one({'_id': order_id})
 		output = {'Header': new_order['Header']}
-
 		if output != '':
 			result = 'Succcess'
 	except Exception as e:

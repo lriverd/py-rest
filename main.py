@@ -4,17 +4,14 @@ from flask import jsonify
 from flask import request
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
+from database import AmandaMessages
+import time
 import os
 
 app = Flask(__name__)
 
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
 
-
-
-client = MongoClient()
-client = MongoClient(os.environ.get('MONGO_URI'))
-db = client.tests
 
 @app.route('/')
 def hello_world():
@@ -52,7 +49,8 @@ def add_order2():
 	result = ''
 	detail = ''
 	try:
-		order = db.orders
+		client = MongoClient(os.environ.get('MONGO_URI'))
+		order = client.test[str('orders')]
 		header = request.json['Header']
 		msge = request.json['Message']
 		order_id = order.insert_one({'Header': header, 'Message': msge}).inserted_id
@@ -67,6 +65,13 @@ def add_order2():
 	finally:
 		return jsonify({'result': result, 'detail': detail})
 
+@app.route('/test2', methods=['GET'])
+def add_test2():
+	conversations = AmandaMessages()
+
+	#conversations.set('123123',{'context.guia_despacho': False})
+	conversations.push('123123123', {'messages': (str(time.time()), 'Hola ')})
+	return 'Ok2'
 
 if __name__ == '__main__':
 	app.run(debug=True)

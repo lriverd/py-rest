@@ -22,6 +22,11 @@ def get_status():
 	output = {'Status': 'Ok'}
 	return jsonify({'result': output})
 
+@app.route('/customerorder-rpa', methods=['POST'])
+def add_order_rpa():
+	result = 'Succcess'
+	detail = '65466868498465'
+	return jsonify({'result': result, 'detail': detail})
 
 @app.route('/customerorder', methods=['POST'])
 def add_order():

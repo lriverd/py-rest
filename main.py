@@ -6,6 +6,7 @@ from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from database import AmandaMessages
 import time
+import sys
 import os
 
 #logging.config.fileConfig('logging.ini')
@@ -14,10 +15,12 @@ import os
 app = Flask(__name__)
 
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
+mongo = PyMongo(app)
 
 @app.route('/')
 def hello_world():
-  return os.environ.get('MONGO_URI')
+	output = {'Status': 'Flask Application Up'}
+	return jsonify({'result': output})
 
 @app.route('/status', methods=['GET'])
 def get_status():
@@ -26,16 +29,33 @@ def get_status():
 
 @app.route('/customerorder-rpa', methods=['POST'])
 def add_order_rpa():
-	result = 'Succcess'
-	detail = '65466868498465'
-	return jsonify({'result': result, 'detail': detail})
+	result = ''
+	detail = ''
+	try:
+		order = mongo.db.orders_jueves
+		#order = mongo.db.orders_rpa
+		ord = request.json['Body']['clienteSubOrdenResponse']['orden']
+		subOrd = request.json['Body']['clienteSubOrdenResponse']['subOrdenLista']
+		lineas = request.json['Body']['clienteSubOrdenResponse']['lineas']
+		ord['clienteCelularLimpio'] = limpiaNumero(ord['clienteCelular'])
+		order_id = order.insert_one({'estado_conversacion':None, 'orden': ord, 'subOrdenLista': subOrd, 'lineas': lineas}).inserted_id
+		new_order = order.find_one({'_id': order_id})
+		output = {'orden': new_order['orden']}
+		if output != '':
+			detail = str(order_id)
+			result = 'Succcess'
+	except Exception as e:
+		result = 'Error'
+		detail = str(e)
+	finally:
+		return jsonify({'result': result, 'detail': detail})
 
 @app.route('/customerorder', methods=['POST'])
 def add_order():
 	result = ''
 	detail = ''
 	try:
-		mongo = PyMongo(app)
+		#mongo = PyMongo(app)
 		order = mongo.db.orders
 		header = request.json['Header']
 		msge = request.json['Message']
@@ -72,13 +92,38 @@ def add_order2():
 	finally:
 		return jsonify({'result': result, 'detail': detail})
 
-@app.route('/test2', methods=['GET'])
-def add_test2():
-	conversations = AmandaMessages()
+@app.route('/orderjueves', methods=['POST'])
+def add_order_jueves():
+	result = ''
+	detail = ''
+	try:		
+		order = mongo.db.orders_jueves
+		ord = request.json['orden']
+		subOrd = request.json['subOrdenLista']
+		lineas = request.json['lineas']
+		order_id = order.insert_one({'estado_conversacion':None, 'orden': ord, 'subOrdenLista': subOrd, 'lineas': lineas}).inserted_id
+		new_order = order.find_one({'_id': order_id})
+		output = {'orden': new_order['orden']}
+		if output != '':
+			detail = str(order_id)
+			result = 'Succcess'
+	except Exception as e:
+		result = 'Error'
+		detail = str(e)
+	finally:
+		return jsonify({'result': result, 'detail': detail})
 
-	#conversations.set('123123',{'context.guia_despacho': False})
-	conversations.push('123123123', {'messages': (str(time.time()), 'Hola ')})
-	return 'Ok2'
+def limpiaNumero(nro: str):
+	numeros = "0123456789"
+	resp = ""
+	for n in nro:
+		if n in numeros:
+			resp += n
+	resp = resp[-8:]
+	resp = "569" + resp
+	return resp
 
 if __name__ == '__main__':
 	app.run(debug=True)
+	#if len(sys.argv) > 1:
+	#	print(limpiaNumero(str(sys.argv[1])))

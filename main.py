@@ -1,4 +1,4 @@
-#import logging.config
+
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -6,15 +6,16 @@ from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from database import AmandaMessages
 import logging
+import logging.config
 import time
 import sys
 import os
 
-#logging.config.fileConfig('logging.ini')
+logging.config.fileConfig('logging.ini', defaults=None, disable_existing_loggers=False)
 #logger = logging.getLogger(__name__)
-
 #logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
+#logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
+#logging.config.fileConfig('logging.ini')
 logger = logging.getLogger(__name__)
 logger.info('Iniciando aplicacion')
 

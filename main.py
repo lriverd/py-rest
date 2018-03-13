@@ -13,7 +13,8 @@ import os
 #logging.config.fileConfig('logging.ini')
 #logger = logging.getLogger(__name__)
 
-logging.basicConfig(level=logging.DEBUG)
+#logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename='example.log', filemode='w', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 logger.info('Iniciando aplicacion')
 

@@ -5,6 +5,7 @@ from flask import request
 from flask_pymongo import PyMongo
 from pymongo import MongoClient
 from database import AmandaMessages
+import logging
 import time
 import sys
 import os
@@ -12,10 +13,14 @@ import os
 #logging.config.fileConfig('logging.ini')
 #logger = logging.getLogger(__name__)
 
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+logger.info('Iniciando aplicacion')
+
 app = Flask(__name__)
 
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI')
-mongo = PyMongo(app)
+#mongo = PyMongo(app)
 
 @app.route('/')
 def hello_world():
@@ -24,6 +29,8 @@ def hello_world():
 
 @app.route('/status', methods=['GET'])
 def get_status():
+	logger.debug('Status correcto')
+	logger.info('Llamada a status')
 	output = {'Status': 'Ok'}
 	return jsonify({'result': output})
 
